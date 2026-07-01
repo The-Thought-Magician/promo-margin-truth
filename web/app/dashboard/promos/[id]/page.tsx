@@ -27,7 +27,7 @@ interface Promo {
   eligible_skus?: unknown
 }
 
-interface WaterfallStep { label: string; amount_cents: number }
+interface WaterfallStep { label: string; cents: number }
 
 interface Pnl {
   promo_id: string
@@ -511,11 +511,11 @@ function Waterfall({ pnl }: { pnl: Pnl }) {
     pnl.waterfall && pnl.waterfall.length
       ? pnl.waterfall
       : [
-          { label: 'Gross revenue', amount_cents: pnl.gross_revenue_cents },
-          { label: 'Discount', amount_cents: -Math.abs(pnl.discount_cents) },
-          { label: 'COGS', amount_cents: -Math.abs(pnl.cogs_cents) },
-          { label: 'Platform fee', amount_cents: -Math.abs(pnl.platform_fee_cents) },
-          { label: 'Contribution', amount_cents: pnl.contribution_cents },
+          { label: 'Gross revenue', cents: pnl.gross_revenue_cents },
+          { label: 'Discount', cents: -Math.abs(pnl.discount_cents) },
+          { label: 'COGS', cents: -Math.abs(pnl.cogs_cents) },
+          { label: 'Platform fee', cents: -Math.abs(pnl.platform_fee_cents) },
+          { label: 'Contribution', cents: pnl.contribution_cents },
         ]
 
   // Build running cumulative for floating bars; treat last step as a total reset.
@@ -527,21 +527,21 @@ function Waterfall({ pnl }: { pnl: Pnl }) {
     let end: number
     if (isTotal) {
       start = 0
-      end = s.amount_cents
-      running = s.amount_cents
+      end = s.cents
+      running = s.cents
     } else {
       start = running
-      end = running + s.amount_cents
+      end = running + s.cents
       running = end
     }
     const lo = Math.min(start, end)
     const hi = Math.max(start, end)
     return {
       label: s.label,
-      amount: s.amount_cents,
+      amount: s.cents,
       leftPct: (Math.max(lo, 0) / max) * 100,
       widthPct: (Math.max(hi - Math.max(lo, 0), 0) / max) * 100,
-      negative: s.amount_cents < 0,
+      negative: s.cents < 0,
       isTotal,
     }
   })
